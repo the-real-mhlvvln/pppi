@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "title": "Купить продукты",
+        "completed": false
+    },
+    {
+        "id": 2,
+        "title": "Посетить тренировку",
+        "completed": true
+    }
+]
