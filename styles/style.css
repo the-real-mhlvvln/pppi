@@ -1,0 +1,139 @@
+/* Общие стили */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f9f9f9;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Шапка */
+.header {
+    background: url('assets/images/background.jpg') no-repeat center center/cover;
+    color: white;
+    text-align: center;
+    padding: 100px 20px;
+}
+
+.header-title {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    color: #000f00;
+}
+
+.header-subtitle {
+    font-size: 1.5rem;
+    color: #000f00;
+}
+
+/* Навигация */
+.navbar {
+    background-color: #333;
+    color: white;
+}
+
+.navbar-menu {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+}
+
+.navbar-menu li {
+    margin: 0 20px;
+}
+
+.navbar-menu a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.navbar-menu a:hover {
+    color: #ffdd57;
+}
+
+/* Основное содержимое */
+.section {
+    padding: 50px 0;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.section-text {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.section-list {
+    list-style: disc;
+    margin-left: 20px;
+    text-align: left;
+}
+
+.labs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.lab-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.lab-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.lab-card p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #ffdd57;
+    color: #333;
+}
+
+/* Подвал */
+.footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.footer-text {
+    font-size: 1rem;
+}
