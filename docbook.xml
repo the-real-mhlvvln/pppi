@@ -1,0 +1,311 @@
+<?xml version='1.0'?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+               "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<book>
+    <title>Справочное руководство по планировщику задач</title>
+
+    <!-- Глава 1: Введение -->
+    <chapter id="introduction">
+        <title>Введение</title>
+        <para>
+            Это справочное руководство описывает функциональность планировщика задач.
+            Проект разделен на несколько модулей, каждый из которых выполняет свою роль:
+            управление задачами, хранение данных и пользовательский интерфейс.
+        </para>
+    </chapter>
+
+    <!-- Глава 2: Модули -->
+    <chapter id="modules">
+        <title>Модули</title>
+
+        <!-- Раздел: TaskManager -->
+        <section id="task-manager">
+            <title>Модуль управления задачами (TaskManager)</title>
+            <para>
+                Этот модуль отвечает за управление задачами, включая их создание,
+                обновление, удаление и отметку как выполненных.
+            </para>
+            <programlisting>
+<![CDATA[
+class TaskManager:
+    def __init__(self, storage):
+        """
+        Инициализация TaskManager с использованием DataStorage.
+        :param storage: Экземпляр класса DataStorage для хранения задач.
+        """
+        self.storage = storage
+
+    def add_task(self, title):
+        """
+        Добавление новой задачи.
+        :param title: Название задачи.
+        :type title: str
+        :return: Сообщение об успешном добавлении задачи.
+        :rtype: str
+        """
+        tasks = self.storage.load_tasks()
+        task_id = len(tasks) + 1
+        new_task = {"id": task_id, "title": title, "completed": False}
+        self.storage.add_task(new_task)
+        return f"Задача '{title}' добавлена."
+
+    def list_tasks(self):
+        """
+        Просмотр всех задач.
+        :return: Список задач в удобочитаемом формате.
+        :rtype: str
+        """
+        tasks = self.storage.load_tasks()
+        if not tasks:
+            return "Список задач пуст."
+        result = "Список задач:\n"
+        for task in tasks:
+            status = "✓" if task["completed"] else "✗"
+            result += f"{task['id']}. [{status}] {task['title']}\n"
+        return result.strip()
+
+    def complete_task(self, task_id):
+        """
+        Отметка задачи как выполненной.
+        :param task_id: Уникальный идентификатор задачи.
+        :type task_id: int
+        :return: Сообщение об успешной отметке задачи.
+        :rtype: str
+        """
+        tasks = self.storage.load_tasks()
+        for task in tasks:
+            if task["id"] == task_id:
+                task["completed"] = True
+                self.storage.save_tasks(tasks)
+                return f"Задача с ID {task_id} отмечена как выполненная."
+        return f"Задача с ID {task_id} не найдена."
+
+    def delete_task(self, task_id):
+        """
+        Удаление задачи.
+        :param task_id: Уникальный идентификатор задачи.
+        :type task_id: int
+        :return: Сообщение об успешном удалении задачи.
+        :rtype: str
+        """
+        tasks = self.storage.load_tasks()
+        for task in tasks:
+            if task["id"] == task_id:
+                tasks.remove(task)
+                self.storage.save_tasks(tasks)
+                return f"Задача с ID {task_id} удалена."
+        return f"Задача с ID {task_id} не найдена."
+
+    def update_task(self, task_id, new_title):
+        """
+        Обновление названия задачи.
+        :param task_id: Уникальный идентификатор задачи.
+        :type task_id: int
+        :param new_title: Новое название задачи.
+        :type new_title: str
+        :return: Сообщение об успешном обновлении задачи.
+        :rtype: str
+        """
+        tasks = self.storage.load_tasks()
+        for task in tasks:
+            if task["id"] == task_id:
+                task["title"] = new_title
+                self.storage.save_tasks(tasks)
+                return f"Задача с ID {task_id} обновлена. Новое название: '{new_title}'."
+        return f"Задача с ID {task_id} не найдена."
+]]>
+            </programlisting>
+        </section>
+
+        <!-- Раздел: DataStorage -->
+        <section id="data-storage">
+            <title>Модуль хранения данных (DataStorage)</title>
+            <para>
+                Этот модуль отвечает за сохранение и загрузку задач из файла JSON.
+                Он предоставляет методы для работы с данными: загрузка, сохранение,
+                добавление, удаление и обновление задач.
+            </para>
+            <programlisting>
+<![CDATA[
+import json
+import os
+
+class DataStorage:
+    def __init__(self, file_path="tasks.json"):
+        """
+        Инициализация DataStorage.
+        :param file_path: Путь к файлу для хранения задач.
+        :type file_path: str
+        """
+        self.file_path = file_path
+
+    def load_tasks(self):
+        """
+        Загрузка задач из файла.
+        :return: Список задач.
+        :rtype: list
+        """
+        if not os.path.exists(self.file_path):
+            return []
+        try:
+            with open(self.file_path, "r", encoding="utf-8") as file:
+                return json.load(file)
+        except json.JSONDecodeError:
+            print("Ошибка: Файл поврежден или содержит некорректные данные.")
+            return []
+
+    def save_tasks(self, tasks):
+        """
+        Сохранение задач в файл.
+        :param tasks: Список задач для сохранения.
+        :type tasks: list
+        """
+        try:
+            with open(self.file_path, "w", encoding="utf-8") as file:
+                json.dump(tasks, file, ensure_ascii=False, indent=4)
+        except IOError:
+            print("Ошибка: Не удалось сохранить задачи в файл.")
+
+    def add_task(self, task):
+        """
+        Добавление новой задачи.
+        :param task: Словарь с данными задачи.
+        :type task: dict
+        """
+        tasks = self.load_tasks()
+        tasks.append(task)
+        self.save_tasks(tasks)
+
+    def remove_task(self, task_id):
+        """
+        Удаление задачи по ID.
+        :param task_id: Уникальный идентификатор задачи.
+        :type task_id: int
+        """
+        tasks = self.load_tasks()
+        tasks = [task for task in tasks if task.get("id") != task_id]
+        self.save_tasks(tasks)
+
+    def update_task(self, task_id, updated_data):
+        """
+        Обновление задачи по ID.
+        :param task_id: Уникальный идентификатор задачи.
+        :type task_id: int
+        :param updated_data: Новые данные для задачи.
+        :type updated_data: dict
+        """
+        tasks = self.load_tasks()
+        for task in tasks:
+            if task.get("id") == task_id:
+                task.update(updated_data)
+                break
+        self.save_tasks(tasks)
+
+    def get_task_by_id(self, task_id):
+        """
+        Получение задачи по ID.
+        :param task_id: Уникальный идентификатор задачи.
+        :type task_id: int
+        :return: Задача или None, если задача не найдена.
+        :rtype: dict or None
+        """
+        tasks = self.load_tasks()
+        for task in tasks:
+            if task.get("id") == task_id:
+                return task
+        return None
+]]>
+            </programlisting>
+        </section>
+
+        <!-- Раздел: UI -->
+        <section id="user-interface">
+            <title>Модуль пользовательского интерфейса (UI)</title>
+            <para>
+                Этот модуль предоставляет текстовый интерфейс для взаимодействия с
+                пользователями. Он позволяет добавлять, удалять, просматривать и
+                обновлять задачи через консоль.
+            </para>
+            <programlisting>
+<![CDATA[
+from task_manager import TaskManager
+from data_storage import DataStorage
+
+def main():
+    """
+    Точка входа в программу. Предоставляет текстовый интерфейс для управления задачами.
+    """
+    storage = DataStorage("tasks.json")
+    manager = TaskManager(storage)
+
+    while True:
+        print("\n=== Планировщик задач ===")
+        print("1. Добавить задачу")
+        print("2. Просмотреть задачи")
+        print("3. Отметить задачу как выполненную")
+        print("4. Удалить задачу")
+        print("5. Обновить задачу")
+        print("6. Выход")
+
+        choice = input("Выберите действие: ").strip()
+
+        try:
+            if choice == "1":
+                title = input("Введите название задачи: ").strip()
+                if not title:
+                    print("Ошибка: Название задачи не может быть пустым.")
+                    continue
+                print(manager.add_task(title))
+
+            elif choice == "2":
+                print(manager.list_tasks())
+
+            elif choice == "3":
+                task_id = int(input("Введите ID задачи для отметки: "))
+                print(manager.complete_task(task_id))
+
+            elif choice == "4":
+                task_id = int(input("Введите ID задачи для удаления: "))
+                print(manager.delete_task(task_id))
+
+            elif choice == "5":
+                task_id = int(input("Введите ID задачи для обновления: "))
+                new_title = input("Введите новое название задачи: ").strip()
+                if not new_title:
+                    print("Ошибка: Новое название задачи не может быть пустым.")
+                    continue
+                print(manager.update_task(task_id, new_title))
+
+            elif choice == "6":
+                print("До свидания!")
+                break
+
+            else:
+                print("Неверный выбор. Попробуйте снова.")
+
+        except ValueError:
+            print("Ошибка: Введено некорректное значение. Пожалуйста, введите число.")
+        except Exception as e:
+            print(f"Произошла ошибка: {e}")
+
+if __name__ == "__main__":
+    main()
+]]>
+            </programlisting>
+        </section>
+    </chapter>
+
+    <!-- Глава 3: API Reference -->
+    <chapter id="api-reference">
+        <title>API Reference</title>
+        <para>
+            Полный список доступных методов и их описания можно найти в соответствующих
+            модулях выше. Для быстрого доступа используйте ссылки:
+        </para>
+        <itemizedlist>
+            <listitem><para><link linkend="task-manager">TaskManager</link></para></listitem>
+            <listitem><para><link linkend="data-storage">DataStorage</link></para></listitem>
+            <listitem><para><link linkend="user-interface">UI</link></para></listitem>
+        </itemizedlist>
+    </chapter>
+</book>
