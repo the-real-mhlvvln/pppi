@@ -1,13 +1,17 @@
 class TaskManager:
     def __init__(self, storage):
         """
-        Инициализация TaskManager с использованием DataStorage.
-        :param storage: Экземпляр класса DataStorage для хранения задач.
+        Инициализация
+        :param storage:
         """
         self.storage = storage
 
-    def add_task(self, title):
-        """Добавление новой задачи."""
+    def add_task(self, title) -> str:
+        """
+        Добавление задачи
+        :param title:
+        :return:
+        """
         tasks = self.storage.load_tasks()
         task_id = len(tasks) + 1
         new_task = {"id": task_id, "title": title, "completed": False}
@@ -15,7 +19,10 @@ class TaskManager:
         return f"Задача '{title}' добавлена."
 
     def list_tasks(self):
-        """Просмотр всех задач."""
+        """
+        Получить задачи
+        :return:
+        """
         tasks = self.storage.load_tasks()
         if not tasks:
             return "Список задач пуст."
@@ -26,7 +33,11 @@ class TaskManager:
         return result.strip()
 
     def complete_task(self, task_id):
-        """Отметка задачи как выполненной."""
+        """
+        Отметить задачу выполненной
+        :param task_id:
+        :return:
+        """
         tasks = self.storage.load_tasks()
         for task in tasks:
             if task["id"] == task_id:
@@ -36,7 +47,11 @@ class TaskManager:
         return f"Задача с ID {task_id} не найдена."
 
     def delete_task(self, task_id):
-        """Удаление задачи."""
+        """
+        Удалить задачу
+        :param task_id:
+        :return:
+        """
         tasks = self.storage.load_tasks()
         for task in tasks:
             if task["id"] == task_id:
@@ -46,7 +61,12 @@ class TaskManager:
         return f"Задача с ID {task_id} не найдена."
 
     def update_task(self, task_id, new_title):
-        """Обновление названия задачи."""
+        """
+        Обновить название задачи
+        :param task_id:
+        :param new_title:
+        :return:
+        """
         tasks = self.storage.load_tasks()
         for task in tasks:
             if task["id"] == task_id:

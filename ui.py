@@ -2,6 +2,10 @@ from task_manager import TaskManager
 from data_storage import DataStorage
 
 def main():
+    """
+    Основная функция
+    :return:
+    """
     # Инициализация хранилища и менеджера задач
     storage = DataStorage("tasks.json")
     manager = TaskManager(storage)

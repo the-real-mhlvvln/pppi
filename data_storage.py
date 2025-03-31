@@ -3,10 +3,16 @@ import os
 
 class DataStorage:
     def __init__(self, file_path="tasks.json"):
+        """
+        :param file_path:
+        """
         self.file_path = file_path
 
     def load_tasks(self):
-        """Загрузка задач из файла."""
+        """
+        Загружаем таски
+        :return:
+        """
         if not os.path.exists(self.file_path):
             return []
         try:
@@ -17,7 +23,11 @@ class DataStorage:
             return []
 
     def save_tasks(self, tasks):
-        """Сохранение задач в файл."""
+        """
+        Сохраняем таски
+        :param tasks:
+        :return:
+        """
         try:
             with open(self.file_path, "w", encoding="utf-8") as file:
                 json.dump(tasks, file, ensure_ascii=False, indent=4)
@@ -46,7 +56,11 @@ class DataStorage:
         self.save_tasks(tasks)
 
     def get_task_by_id(self, task_id):
-        """Получение задачи по ID."""
+        """
+        Получить таски по id
+        :param task_id:
+        :return:
+        """
         tasks = self.load_tasks()
         for task in tasks:
             if task.get("id") == task_id:
